@@ -1,4 +1,4 @@
-package com.example.tdstudent.controller;
+/*package com.example.tdstudent.controller;
 
 import com.example.tdstudent.model.Student;
 import org.springframework.http.HttpStatus;
@@ -208,6 +208,42 @@ public class StudentControllerTD3 {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .header("Content-Type", "application/json")
                     .body(response);
+        }
+    }
+}*/
+package com.example.tdstudent.controller;
+
+import com.example.tdstudent.exception.BadRequestException;
+import com.example.tdstudent.model.Student;
+import com.example.tdstudent.service.StudentService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+public class StudentController {
+
+    private final StudentService studentService;
+
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
+
+    @PostMapping("/students")
+    public ResponseEntity<?> createStudents(@RequestBody List<Student> newStudents) {
+        try {
+            List<Student> savedStudents = studentService.addStudents(newStudents);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .header("Content-Type", "application/json")
+                    .body(savedStudents);
+        } catch (BadRequestException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .header("Content-Type", "text/plain")
+                    .body(e.getMessage());
         }
     }
 }
